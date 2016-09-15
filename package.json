@@ -25,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/atomba/table-exporter/issues"
   },
-  "homepage": "https://github.com/atomba/table-exporter#readme"
+  "homepage": "https://github.com/atomba/table-exporter#readme",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "request": "^2.74.0"
+  }
 }
