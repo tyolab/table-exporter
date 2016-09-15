@@ -1,0 +1,29 @@
+{
+  "name": "table-exporter",
+  "version": "0.0.1",
+  "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/atomba/table-exporter.git"
+  },
+  "keywords": [
+    "HTML",
+    "CSS",
+    "Table",
+    "JSON",
+    "CSV",
+    "export",
+    "data",
+    "transformation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atomba/table-exporter/issues"
+  },
+  "homepage": "https://github.com/atomba/table-exporter#readme"
+}
