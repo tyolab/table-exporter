@@ -2,7 +2,7 @@
   "name": "table-exporter",
   "version": "0.0.1",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

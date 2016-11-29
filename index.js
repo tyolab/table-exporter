@@ -1,33 +1,26 @@
-var request = require('request');
-var cheerio = require('cheerio');
+module.exports = function (html, selector) {
+    var request = require('request');
+    var cheerio = require('cheerio');
 
+    var TableExporter = require('./lib/exporter');
 
-var request = require('request');
-var cheerio = require('cheerio');
+    selector = selector | 'table';
 
-var fs = require('fs');
+    function processHtml(html) {
+        var $ = cheerio.load(html);
 
-var TableExporter = require('./lib/exporter');
+        var exporter = new TableExporter($);
 
-function processHtml(html) {
-    var $ = cheerio.load(html);
+        //var data = exporter.exportTableToCSV(/* selector to export */'table');
 
-    var exporter = new TableExporter($);
+        var array = [];
+        $('table').each(function() {
+            var table = exporter.exportTableToJSON($(this));
+            array.push(table);
+        });
 
-    var data = exporter.exportTableToCSV($('#dvData > table'));
-
-    console.log(data);
-}
-
-if (true) {
-    fs.readFile(process.argv[2], function (err, html) {
-        processHtml(html);
-    });
-}
-else {
-    request(process.argv[2], function (error, response, html) {
-    if (!error && response.statusCode == 200) {
-        processHtml(html);
+        return array;
     }
-    });
+
+    return processHtml(html);
 }
