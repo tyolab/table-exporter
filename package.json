@@ -1,14 +1,18 @@
 {
   "name": "table-exporter",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
-  "main": "main.js",
+  "main": "index.js",
+  "bin": {
+      "export-table": "./export_table.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "export": "./export_table.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/atomba/table-exporter.git"
+    "url": "git+ssh://git@github.com/tyolab/table-exporter.git"
   },
   "keywords": [
     "HTML",
@@ -23,9 +27,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/atomba/table-exporter/issues"
+    "url": "https://github.com/tyolab/table-exporter/issues"
   },
-  "homepage": "https://github.com/atomba/table-exporter#readme",
+  "homepage": "https://github.com/tyolab/table-exporter#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
     "request": "^2.74.0"

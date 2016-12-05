@@ -22,6 +22,26 @@
             "outDir": null
         },
         {
+            "name": "Test job page",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/main.js",
+            "stopOnEntry": false,
+            "args": ["/data/tyolab/code/jobs.tyo.com.au/tmp/4000402376.html"],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": "internalConsole",
+            "sourceMaps": false,
+            "outDir": null
+        },        
+        {
             "name": "Attach",
             "type": "node",
             "request": "attach",
