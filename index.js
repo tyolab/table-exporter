@@ -13,15 +13,26 @@ module.exports = function (html, tableSelector, findSelector, callback) {
 
     callback = callback || function (x, y, k, nodes, $) {
         if (nodes.length > 0) {
-            var link = {table:k, row:x, col:y};
+            var colStr = '' + y;
+
+            if (!links[k]) {
+                links[k] = {};
+            }
+
+            if (!links[k][colStr]) {
+                links[k][colStr] = [];
+            }
+
+            // var link = {table: k, row: x, col: y};
             var urls = [];
             $(nodes).each(function (i, link) {
                 var url = $(link).attr('href');
                 var anchor = $(link).text();
                 urls.push({url: url, anchor: anchor});
             });
-            link.urls = urls;
-            links.push(link);
+            // link.urls = urls;
+            // links[k](link);
+            links[k][colStr][x] = urls;
         }
     };
 
