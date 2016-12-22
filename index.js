@@ -15,9 +15,10 @@ module.exports = function (html, tableSelector, findSelector, callback) {
         if (nodes.length > 0) {
             var link = {table:k, row:x, col:y};
             var urls = [];
-            $(nodes).each(function(i, link) {
+            $(nodes).each(function (i, link) {
                 var url = $(link).attr('href');
-                urls.push(url);
+                var anchor = $(link).text();
+                urls.push({url: url, anchor: anchor});
             });
             link.urls = urls;
             links.push(link);
@@ -31,7 +32,6 @@ module.exports = function (html, tableSelector, findSelector, callback) {
 
         //var data = exporter.exportTableToCSV(/* selector to export */'table');
 
-
         var i = 0;
         $('table').each(function() {
             var table = exporter.export($(this), i, findSelector, callback);
@@ -39,7 +39,7 @@ module.exports = function (html, tableSelector, findSelector, callback) {
             ++i;
         });
 
-        return {tables:tables, links:links};
+        return {tables: tables, links: links};
     }
 
     return processHtml(html);
