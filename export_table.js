@@ -19,14 +19,7 @@ function doJob (html) {
     var links = [];
 
     obj = exportFn(html);
-    console.log("tables:");
-    console.log(JSON.stringify(obj.tables));
-
-    // we look for links too
-    if (obj.links && obj.links.length > 0) {
-        console.log("links:");
-        console.log(JSON.stringify(obj.links));
-    }
+    console.log(JSON.stringify(obj));
 }
 
 try {

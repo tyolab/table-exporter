@@ -1,4 +1,4 @@
-module.exports = function (html, tableSelector, findSelector, callback) {
+module.exports = function (html, tableSelector, findSelector, findProcessor) {
     var request = require('request');
     var cheerio = require('cheerio');
 
@@ -8,32 +8,19 @@ module.exports = function (html, tableSelector, findSelector, callback) {
 
     findSelector = findSelector || 'a';
     
-    var links = [];
     var tables = [];
 
-    callback = callback || function (x, y, k, nodes, $) {
+    findProcessor = findProcessor || function (x, y, k, nodes, $) {
+        var urls = [];
         if (nodes.length > 0) {
-            var colStr = '' + y;
-
-            if (!links[k]) {
-                links[k] = {};
-            }
-
-            if (!links[k][colStr]) {
-                links[k][colStr] = [];
-            }
-
-            // var link = {table: k, row: x, col: y};
-            var urls = [];
+            
             $(nodes).each(function (i, link) {
                 var url = $(link).attr('href');
                 var anchor = $(link).text();
                 urls.push({url: url, anchor: anchor});
             });
-            // link.urls = urls;
-            // links[k](link);
-            links[k][colStr][x] = urls;
         }
+        return urls.length > 0 ? {urls: urls} : null;
     };
 
     function processHtml(html) {
@@ -45,12 +32,12 @@ module.exports = function (html, tableSelector, findSelector, callback) {
 
         var i = 0;
         $('table').each(function() {
-            var table = exporter.export($(this), i, findSelector, callback);
+            var table = exporter.export($(this), i, findSelector, findProcessor);
             tables.push(table);
             ++i;
         });
 
-        return {tables: tables, links: links};
+        return tables;
     }
 
     return processHtml(html);
