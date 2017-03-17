@@ -1,8 +1,29 @@
-module.exports = function (html, tableSelector, findSelector, findProcessor) {
-    var request = require('request');
-    var cheerio = require('cheerio');
+/**
+ * @file index.js
+ */
 
-    var TableExporter = require('./lib/exporter');
+var cheerio = require('cheerio');
+
+var TableExporter = require('./lib/exporter');
+
+/**
+ * export table with a selector for a particular node
+ */
+
+function linkProcessor (x, y, k, nodes, $) {
+    var urls = [];
+    if (nodes.length > 0) {
+        
+        $(nodes).each(function (i, link) {
+            var url = $(link).attr('href');
+            var anchor = $(link).text();
+            urls.push({url: url, anchor: anchor});
+        });
+    }
+    return urls.length > 0 ? {urls: urls} : null;
+};
+
+module.exports.export = function (html, tableSelector, findSelector, findProcessor) {
 
     tableSelector = tableSelector | 'table';
 
@@ -10,18 +31,7 @@ module.exports = function (html, tableSelector, findSelector, findProcessor) {
     
     var tables = [];
 
-    findProcessor = findProcessor || function (x, y, k, nodes, $) {
-        var urls = [];
-        if (nodes.length > 0) {
-            
-            $(nodes).each(function (i, link) {
-                var url = $(link).attr('href');
-                var anchor = $(link).text();
-                urls.push({url: url, anchor: anchor});
-            });
-        }
-        return urls.length > 0 ? {urls: urls} : null;
-    };
+    findProcessor = findProcessor || linkProcessor;
 
     function processHtml(html) {
         var $ = cheerio.load(html);
@@ -41,4 +51,31 @@ module.exports = function (html, tableSelector, findSelector, findProcessor) {
     }
 
     return processHtml(html);
+}
+
+/**
+ *  sometimes it is easier to export rows rather than a single element
+ */
+
+module.exports.exportRows = function (html, rowSelector, colSelector, findSelector, findProcessor) {
+
+    findSelector = findSelector || 'a';
+
+    findProcessor = findProcessor || linkProcessor;
+
+    var rows = [];
+
+    var $ = cheerio.load(html);
+
+    var exporter = new TableExporter($);
+    var i = 0;
+    $(rowSelector).each(function() {
+        var row = exporter.exportRow($(this), i, colSelector, findSelector, findProcessor);
+        if (row && row.length > 0) {
+            rows.push(row);
+            ++i;
+        }
+    });
+
+    return rows;
 }
