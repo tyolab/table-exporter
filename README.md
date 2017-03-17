@@ -4,6 +4,12 @@ Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)
 
 ## Usage
 
+node
+
+## Examples
+
+### 
+
 ```javascript
 
 var exporter = require('table-exporter');

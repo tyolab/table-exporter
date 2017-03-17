@@ -3,12 +3,13 @@
   "version": "0.0.7",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
   "main": "index.js",
-  "bin": {
-      "export-table": "./export_table.js"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "export": "./export_table.js"
+    "export": "./bin/export_table.js"
+  },
+  "bin": {
+      "export-table": "./bin/export_table.js",
+      "export-rows": "./bin/export_rows.js"
   },
   "repository": {
     "type": "git",

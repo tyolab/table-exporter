@@ -10,7 +10,7 @@ var TableExporter = require('./lib/exporter');
  * export table with a selector for a particular node
  */
 
-function linkProcessor (x, y, k, nodes, $) {
+function linkProcessor ($, nodes, x, y, k) {
     var urls = [];
     if (nodes.length > 0) {
         
@@ -69,7 +69,8 @@ module.exports.exportRows = function (html, rowSelector, colSelector, findSelect
 
     var exporter = new TableExporter($);
     var i = 0;
-    $(rowSelector).each(function() {
+    $nodes = $(rowSelector);
+    $nodes.each(function() {
         var row = exporter.exportRow($(this), i, colSelector, findSelector, findProcessor);
         if (row && row.length > 0) {
             rows.push(row);

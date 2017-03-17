@@ -1,7 +1,7 @@
 var ExportJob = require('./export');
 
 if (process.argv.length < 3) {
-    console.log('usage: node . url/file [tag]');
+    console.log('usage: node  ' + __filename + ' url/file [tag]');
     process.exit(-1);
 }
 
