@@ -23,23 +23,15 @@ function linkProcessor ($, nodes, x, y, k) {
     return urls.length > 0 ? {urls: urls} : null;
 };
 
-module.exports.export = function (html, tableSelector, findSelector, findProcessor) {
+/**
+ * Export from parsed node by jQuery or Cheerio
+ */
 
-    tableSelector = tableSelector | 'table';
-
-    findSelector = findSelector || 'a';
-    
+function exportNode (node, tableSelector, findSelector, findProcessor) {
     var tables = [];
 
-    findProcessor = findProcessor || linkProcessor;
-
-    function processHtml(html) {
-        var $ = cheerio.load(html);
-
+    function processNode($) {
         var exporter = new TableExporter($);
-
-        //var data = exporter.exportTableToCSV(/* selector to export */'table');
-
         var i = 0;
         $('table').each(function() {
             var table = exporter.export($(this), i, findSelector, findProcessor);
@@ -49,8 +41,23 @@ module.exports.export = function (html, tableSelector, findSelector, findProcess
 
         return tables;
     }
+    return processNode(node);
+}
 
-    return processHtml(html);
+/**
+ * Export the html page
+ */
+
+module.exports.export = function (html, tableSelector, findSelector, findProcessor) {
+
+    tableSelector = tableSelector | 'table';
+
+    findSelector = findSelector || 'a';
+
+    findProcessor = findProcessor || linkProcessor;
+
+    var $ = cheerio.load(html);
+    return exportNode($, tableSelector, findSelector, findProcessor);
 }
 
 /**

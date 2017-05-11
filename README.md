@@ -4,7 +4,9 @@ Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)
 
 ## Usage
 
-node
+```javascript
+node bin/export_table table.html 
+```
 
 ## Examples
 
@@ -52,7 +54,30 @@ var exporter = require('table-exporter');
 
 ```
 
+## Use in a brower
 
+### Install Browserify
+
+```bash
+npm install --global browserify
+```
+
+### Produce Table Exporter Javascript Bundle
+
+```javascript
+browserify index.js -o te.js
+```
+
+```html
+<!DOCTYPE>
+<html>
+    <head>
+    <script src="../te.js"></script>
+    </head>
+    <body>
+    </body>
+</html>
+```
 
 ## Maintainer
 
