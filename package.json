@@ -33,7 +33,7 @@
   "homepage": "https://github.com/tyolab/table-exporter#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
-    "node-programmer": "0.0.4",
+    "node-programmer": "0.0.5",
     "request": "^2.74.0"
   },
   "files": [

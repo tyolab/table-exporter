@@ -10,12 +10,25 @@ function exportFile(html, exportFn, opts) {
     var result = exportFn(html, opts["table-selector"], [opts["header-selector"], opts["row-selector"], opts["cell-selector"]], opts["target-selector"]);
 
     if (result.tables && result.tables.length && result.tables.length > 0) {
-        if (opts["output-name"]) {
-            var outname = opts["output-name"] + '.' + opts["output-type"];
+        var writeFile = false;
+
+
+        if (opts["output-name"]) 
+            writeFile = true;
+        
+        // by default we only export csv file
+        var i = 0;
+        for (; i < result.tables.length; ++i) {
+            var table = result.tables[i];
+
+            var text;
             
-            // by default we only export csv file
-            var i = 0;
-            for (; i < result.tables.length; ++i) {
+            if (opts["output-type"] !== 'json') 
+                text = result.exporter.generateCSV(table, opts["cell-delim"], opts["row-delim"]);
+            else
+                text = JSON.stringify(result.tables);
+                
+            if (writeFile) {
                 if (i === 1) {
                     outname = opts["output-name"] + '.' + opts["output-type"];
                 }
@@ -23,11 +36,11 @@ function exportFile(html, exportFn, opts) {
                     outname = opts["output-name"] + i + '.' + opts["output-type"];
                 }
 
-                result.tables[i].exporter.generateOutput(result.tables[i], opts["cell-delim"]);
+                fs.writeFileSync(outname, csv);
             }
+            else
+                console.log(text);
         }
-        else
-            console.log(JSON.stringify(result.tables));
     }
     else {
         console.error("No table found");

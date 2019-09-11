@@ -7,13 +7,15 @@ function showUsage() {
 }
 
 var optsAvailable = {
-    table-selector: null;
-    header-selector: null;
-    row-selector: null;
-    cell-selector: null;
-    target-selector: null;
-    output-type: "csv";
-    output-name: "export"
+    "table-selector": null,
+    "header-selector": null,
+    "row-selector": null,
+    "cell-selector": null,
+    "target-selector": null,
+    "output-type": "json",
+    "output-name": null,
+    "cell-delim": null,
+    "row-delim": null
 };
 
 var params = new Params(optsAvailable);
@@ -30,6 +32,6 @@ if (inputs.length === 0) {
     process.exit(-1);
 }
 
-var fileOrUrl = inputs[0];
+var fileOrUrl = Array.isArray(inputs) ? inputs[0] : inputs;
 
 new ExportJob(fileOrUrl).process(opts); 
