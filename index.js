@@ -27,21 +27,30 @@ function linkProcessor ($, nodes, x, y, k) {
  * Export from parsed node by jQuery or Cheerio
  */
 
-function exportNode (node, tableSelector, selector, findProcessor) {
+function exportNode (node, tableSelector, selectors, findProcessor) {
+    var result = {};
     var tables = [];
-
-    tableSelector = tableSelector || 'table';
 
     function processNode($) {
         var exporter = new TableExporter($);
         var i = 0;
-        $(tableSelector).each(function() {
-            var table = exporter.export($(this), i, selector, findProcessor);
-            tables.push(table);
-            ++i;
-        });
 
-        return tables;
+        if (tableSelector)
+            $(tableSelector).each(function() {
+                var table = exporter.export($(this), i, selectors, findProcessor);
+                if (null != table)
+                    tables.push(table);
+                ++i;
+            });
+        else {
+            var table = exporter.export($, 0, selectors, findProcessor);
+            if (null != table)
+                tables.push(table);
+        }
+
+        result.tables = tables;
+        result.exporter = exporter;
+        return result;
     }
     return processNode(node);
 }
@@ -50,19 +59,18 @@ function exportNode (node, tableSelector, selector, findProcessor) {
  * Export the html page
  */
 
-module.exports.export = function (html, selector, findProcessor, tableSelector) {
+module.exports.export = function (html, tableSelector, selectors, targetSelector, findProcessor) {
 
     var $ = cheerio.load(html);
 
     if (!tableSelector) {
         if ($('table').length)
             tableSelector = 'table';
-        tableSelector = tableSelector | 'table';
     }
 
-    findProcessor = findProcessor || linkProcessor;
+    // findProcessor = findProcessor || linkProcessor;
 
-    return exportNode($, tableSelector, selector, findProcessor);
+    return exportNode($, tableSelector, selectors, targetSelector, findProcessor);
 }
 
 /**

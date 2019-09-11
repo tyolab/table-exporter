@@ -6,27 +6,38 @@ var fs = require('fs');
 var exporter = require('../index');
 var request = require('request');
 
-if (process.argv.length < 3) {
-    console.log('usage: node  ' + __filename + ' url/file [tag]');
-    process.exit(-1);
-}
+function exportFile(html, exportFn, opts) {
+    var result = exportFn(html, opts["table-selector"], [opts["header-selector"], opts["row-selector"], opts["cell-selector"]], opts["target-selector"]);
 
-if (process.argv.length > 3) {
-    tag = process.argv[3];
-}
+    if (result.tables && result.tables.length && result.tables.length > 0) {
+        if (opts["output-name"]) {
+            var outname = opts["output-name"] + '.' + opts["output-type"];
+            
+            // by default we only export csv file
+            var i = 0;
+            for (; i < result.tables.length; ++i) {
+                if (i === 1) {
+                    outname = opts["output-name"] + '.' + opts["output-type"];
+                }
+                else {
+                    outname = opts["output-name"] + i + '.' + opts["output-type"];
+                }
 
-var fileOrUrl = process.argv[2];
-var obj;
-
-function exportFile(html, exportFn, rowSelector, colSelector) {
-    var obj = exportFn(html, rowSelector, colSelector);
-    console.log(JSON.stringify(obj));
+                result.tables[i].exporter.generateOutput(result.tables[i], opts["cell-delim"]);
+            }
+        }
+        else
+            console.log(JSON.stringify(result.tables));
+    }
+    else {
+        console.error("No table found");
+    }
 }
 
 function ExportJob (fileOrUrl, exportFn) {
     exportFn = exportFn || exporter.export;
 
-    this.process = function (rowSelector, colSelector) {
+    this.process = function (opts) {
         try {
             fs.accessSync(fileOrUrl, fs.F_OK);
             // @todo 
@@ -34,13 +45,13 @@ function ExportJob (fileOrUrl, exportFn) {
             // If file isn't accessible
 
            fs.readFile(fileOrUrl, function (err, html) {
-                exportFile(html, exportFn, rowSelector, colSelector);
+                exportFile(html, exportFn, opts);
             });
 
         } catch (e) {
             request(fileOrUrl, function (error, response, html) {
                 if (!error && response.statusCode == 200) {
-                    exportFile(html, exportFn, rowSelector, colSelector);
+                    exportFile(html, exportFn, rowSelector, cellSelector);
                 }
             });
         }
