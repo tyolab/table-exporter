@@ -29,9 +29,9 @@ function ExportJob (fileOrUrl, exportFn) {
     this.process = function (rowSelector, colSelector) {
         try {
             fs.accessSync(fileOrUrl, fs.F_OK);
+            // @todo 
             // Do something
-
-            // It isn't accessible
+            // If file isn't accessible
 
            fs.readFile(fileOrUrl, function (err, html) {
                 exportFile(html, exportFn, rowSelector, colSelector);

@@ -1,4 +1,5 @@
 var ExportJob = require('./export');
+var Params = require('node-programmer/params');
 
 if (process.argv.length < 3) {
     console.log('usage: node ' + __filename + ' url/file [tag]');

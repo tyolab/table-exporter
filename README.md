@@ -17,7 +17,7 @@ node bin/export_table table.html
 var exporter = require('table-exporter');
 
 /**
- *  exporter = function (html, tableSelector, findSelector, callback)
+ *  exporter = function (html, tableSelector, targetSelector, callback)
  */
  var html = `<html>
                 <body>

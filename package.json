@@ -8,8 +8,8 @@
     "export": "./bin/export_table.js"
   },
   "bin": {
-      "export-table": "./bin/export_table.js",
-      "export-rows": "./bin/export_rows.js"
+    "export-table": "./bin/export_table.js",
+    "export-rows": "./bin/export_rows.js"
   },
   "repository": {
     "type": "git",
@@ -33,9 +33,10 @@
   "homepage": "https://github.com/tyolab/table-exporter#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
+    "node-programmer": "0.0.4",
     "request": "^2.74.0"
   },
-     "files": [
+  "files": [
     "LICENSE",
     "lib/",
     "README.md",

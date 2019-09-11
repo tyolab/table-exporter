@@ -27,14 +27,16 @@ function linkProcessor ($, nodes, x, y, k) {
  * Export from parsed node by jQuery or Cheerio
  */
 
-function exportNode (node, tableSelector, findSelector, findProcessor) {
+function exportNode (node, tableSelector, selector, findProcessor) {
     var tables = [];
+
+    tableSelector = tableSelector || 'table';
 
     function processNode($) {
         var exporter = new TableExporter($);
         var i = 0;
-        $('table').each(function() {
-            var table = exporter.export($(this), i, findSelector, findProcessor);
+        $(tableSelector).each(function() {
+            var table = exporter.export($(this), i, selector, findProcessor);
             tables.push(table);
             ++i;
         });
@@ -48,42 +50,46 @@ function exportNode (node, tableSelector, findSelector, findProcessor) {
  * Export the html page
  */
 
-module.exports.export = function (html, tableSelector, findSelector, findProcessor) {
+module.exports.export = function (html, selector, findProcessor, tableSelector) {
 
-    tableSelector = tableSelector | 'table';
+    var $ = cheerio.load(html);
 
-    findSelector = findSelector || 'a';
+    if (!tableSelector) {
+        if ($('table').length)
+            tableSelector = 'table';
+        tableSelector = tableSelector | 'table';
+    }
 
     findProcessor = findProcessor || linkProcessor;
 
-    var $ = cheerio.load(html);
-    return exportNode($, tableSelector, findSelector, findProcessor);
+    return exportNode($, tableSelector, selector, findProcessor);
 }
 
 /**
  *  sometimes it is easier to export rows rather than a single element
  */
 
-module.exports.exportRows = function (html, rowSelector, colSelector, findSelector, findProcessor) {
+module.exports.exportRows = function (html, selector, findProcessor) {
 
-    findSelector = findSelector || 'a';
+    // targetSelector = targetSelector || 'a';
 
     findProcessor = findProcessor || linkProcessor;
-
-    var rows = [];
 
     var $ = cheerio.load(html);
 
     var exporter = new TableExporter($);
     var i = 0;
-    $nodes = $(rowSelector);
-    $nodes.each(function() {
-        var row = exporter.exportRow($(this), i, colSelector, findSelector, findProcessor);
-        if (row && row.length > 0) {
-            rows.push(row);
-            ++i;
-        }
-    });
+
+    var rows = exporter.exportRows($(this), selector, findProcessor);
+    // [];
+    // $nodes = $(rowSelector);
+    // $nodes.each(function() {
+    //     var row = exporter.exportRow($(this), i, colSelector, targetSelector, findProcessor);
+    //     if (row && row.length > 0) {
+    //         rows.push(row);
+    //         ++i;
+    //     }
+    // });
 
     return rows;
 }
