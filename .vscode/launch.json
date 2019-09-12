@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test with te.html",
+            "program": "${workspaceFolder}/bin/export_table.js",
+            "args": ["${workspaceFolder}/test/te.html"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test with div_table.html",
+            "program": "${workspaceFolder}/bin/export_table.js",
+            "args": [
+                "${workspaceFolder}/test/div_table.html",
+                "--row-selector", ".rTableRow",
+                "--cell-selector", ".rTableCell"
+            ]
+        }
+    ]
+}

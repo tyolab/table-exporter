@@ -43,7 +43,8 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
                 ++i;
             });
         else {
-            var table = exporter.export($, 0, selectors, findProcessor);
+            // search from the root if we don't have the table selector
+            var table = exporter.export($("html"), 0, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
         }
