@@ -21,6 +21,21 @@
                 "--row-selector", ".rTableRow",
                 "--cell-selector", ".rTableCell"
             ]
+        },
+        // Sorry, the html file for the debugging isn't included in the repo
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test with spreads.html",
+            "program": "${workspaceFolder}/bin/export_table.js",
+            "args": [
+                "${workspaceFolder}/test/spreads.html",
+                "--output-name", "table",
+                "--table-selector", ".spread-table",
+                "--header-selector", ".column-name",
+                "--row-selector", ".table-row",
+                "--cell-selector", ".table-cell"
+            ]
         }
     ]
 }

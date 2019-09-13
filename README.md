@@ -79,7 +79,10 @@ browserify index.js -o te.js
 </html>
 ```
 
+## Chrome Extension
+
+
 ## Maintainer
 
-[Eric Tang](https://twitter.com/_e_tang) @ [TYO LAB](http://tyo.com.au)
+[Eric Tang](https://twitter.com/_e_tang) @ [TYO Lab](http://tyo.com.au)
 

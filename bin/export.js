@@ -30,16 +30,19 @@ function exportFile(html, exportFn, opts) {
                 
             if (writeFile) {
                 if (i === 1) {
-                    outname = opts["output-name"] + '.' + opts["output-type"];
+                    outname = opts["output-name"] + '.csv' /* + opts["output-type"] */;
                 }
                 else {
-                    outname = opts["output-name"] + i + '.' + opts["output-type"];
+                    outname = opts["output-name"] + i + '.csv' /* + opts["output-type"] */;
                 }
 
-                fs.writeFileSync(outname, csv);
+                fs.writeFileSync(outname, text);
             }
-            else
+            else {
+                if (i > 0)
+                    console.log();
                 console.log(text);
+            }
         }
     }
     else {

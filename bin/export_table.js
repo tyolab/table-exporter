@@ -2,7 +2,18 @@ var ExportJob = require('./export');
 var Params = require('node-programmer/params');
 
 function showUsage() {
-    console.log('usage: node  ' + __filename + ' url/file [--table-selector table-selector] [--header-selector header-selector] [--row-selector row-selector] [--cell-selector cell-selector] [--target-selector target-selector] [--output-type [csv|json]] [--output-name name]');
+    console.log('usage: node  ' + __filename + ' url/file' + `
+        \nAvailable Options:
+        \t\t\t[--table-selector table-selector] 
+        \t\t\t[--header-selector header-selector] 
+        \t\t\t[--row-selector row-selector] 
+        \t\t\t[--cell-selector cell-selector] 
+        \t\t\t[--target-selector target-selector] 
+        \t\t\t[--output-type [csv|json]]
+        \t\t\t[--output-name name]
+        \t\t\t[--cell-delim delim]
+        `
+        );
     process.exit(-1);
 }
 
@@ -15,7 +26,7 @@ var optsAvailable = {
     "output-type": "json",
     "output-name": null,
     "cell-delim": null,
-    "row-delim": null
+    "row-delim": "\n",
 };
 
 var params = new Params(optsAvailable);
@@ -25,7 +36,7 @@ var optCount = params.getOptCount();
 
 var inputs = opts['---'];
 
-if (inputs.length === 0) {
+if (!inputs || inputs.length === 0) {
     // params.setUsage(optsAvailable);
     // params.showUsage();
     showUsage()
