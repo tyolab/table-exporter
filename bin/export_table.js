@@ -20,6 +20,7 @@ function showUsage() {
 var optsAvailable = {
     "table-selector": null,
     "header-selector": null,
+    "column-selector": null,
     "row-selector": null,
     "cell-selector": null,
     "target-selector": null,

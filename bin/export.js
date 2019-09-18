@@ -7,11 +7,10 @@ var exporter = require('../index');
 var request = require('request');
 
 function exportFile(html, exportFn, opts) {
-    var result = exportFn(html, opts["table-selector"], [opts["header-selector"], opts["row-selector"], opts["cell-selector"], opts["target-selector"]]);
+    var result = exportFn(html, opts["table-selector"], [opts["header-selector"], opts["column-selector"], opts["row-selector"], opts["cell-selector"], opts["target-selector"]]);
 
     if (result.tables && result.tables.length && result.tables.length > 0) {
         var writeFile = false;
-
 
         if (opts["output-name"]) 
             writeFile = true;
@@ -40,7 +39,7 @@ function exportFile(html, exportFn, opts) {
             }
             else {
                 if (i > 0)
-                    console.log();
+                    console.log("\n\n");
                 console.log(text);
             }
         }
