@@ -2,7 +2,26 @@
  * @file index.js
  */
 
-var cheerio = require('cheerio');
+var isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
+
+function getQuery(html) {
+    if (isBrowser()) {
+
+        if (!$) {
+            var se = document.createElement('script'); 
+            se.type = 'text/javascript'; 
+            se.async = true;
+            se.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js';
+            var s = document.getElementsByTagName('script')[0]; 
+            s.parentNode.insertBefore(se, s);
+        }
+        return $(html || 'html');
+    }
+    else {
+        var cheerio = require('cheerio');
+        return cheerio.load(html);
+    }
+}
 
 var TableExporter = require('./lib/exporter');
 
@@ -62,7 +81,7 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
 
 module.exports.export = function (html, tableSelector, selectors, targetSelector, findProcessor) {
 
-    var $ = cheerio.load(html);
+    var _$ = ;
 
     if (!tableSelector) {
         if ($('table').length)
@@ -71,7 +90,7 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
 
     // findProcessor = findProcessor || linkProcessor;
 
-    return exportNode($, tableSelector, selectors, targetSelector, findProcessor);
+    return exportNode(_$, tableSelector, selectors, targetSelector, findProcessor);
 }
 
 /**
@@ -84,21 +103,12 @@ module.exports.exportRows = function (html, selector, findProcessor) {
 
     findProcessor = findProcessor || linkProcessor;
 
-    var $ = cheerio.load(html);
+    var $ = getQuery(html);
 
     var exporter = new TableExporter($);
     var i = 0;
 
     var rows = exporter.exportRows($(this), selector, findProcessor);
-    // [];
-    // $nodes = $(rowSelector);
-    // $nodes.each(function() {
-    //     var row = exporter.exportRow($(this), i, colSelector, targetSelector, findProcessor);
-    //     if (row && row.length > 0) {
-    //         rows.push(row);
-    //         ++i;
-    //     }
-    // });
 
     return rows;
 }
