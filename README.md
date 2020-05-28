@@ -65,7 +65,7 @@ npm install --global browserify
 ### Produce Table Exporter Javascript Bundle
 
 ```javascript
-browserify index.js -o web/te.js
+browserify web.js -o web/te.js
 ```
 
 ```html

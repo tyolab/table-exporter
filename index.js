@@ -2,12 +2,16 @@
  * @file index.js
  */
 
-var isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
+var _te = _te || {};
+
+function isBrowser() {
+    try {return this===window;}catch(e){ return false;}
+}
 
 function getQuery(html) {
-    if (isBrowser()) {
+    if (_te.in_browser) {
 
-        if (!$) {
+        if (typeof $ === 'undefined') {
             var se = document.createElement('script'); 
             se.type = 'text/javascript'; 
             se.async = true;
@@ -18,9 +22,26 @@ function getQuery(html) {
         return $(html || 'html');
     }
     else {
-        var cheerio = require('cheerio');
-        return cheerio.load(html);
+        if (typeof html === 'string') {
+            var cheerio = require('cheerio');
+            return cheerio.load(html);
+        }
+        return html;
     }
+}
+
+_te.in_browser = isBrowser();
+_te.environment = _te.environment || (_te.in_browser ? "browser" : "node");
+_te.getQuery = getQuery;
+
+if (_te.in_browser) {
+    _te.alert = _te.alert || alert.bind(window); 
+    window.getQuery = getQuery.bind(window);
+    window._te = _te;
+}
+else {
+    global.getQuery = getQuery.bind(global);
+    global._te = _te;
 }
 
 var TableExporter = require('./lib/exporter');
@@ -50,23 +71,22 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
     var result = {};
     var tables = [];
 
-    function processNode($) {
-        var exporter = new TableExporter($);
+    // if table selector is not set, we would just table
+    tableSelector = tableSelector || "table";
+
+    function processNode($node) {
+        var exporter = new TableExporter($node);
         var i = 0;
 
-        if (tableSelector)
-            $(tableSelector).each(function() {
-                var table = exporter.export($(this), i, selectors, findProcessor);
-                if (null != table)
-                    tables.push(table);
-                ++i;
-            });
-        else {
-            // search from the root if we don't have the table selector
-            var table = exporter.export($("html"), 0, selectors, findProcessor);
+        var $tables = _te.in_browser ? getQuery(tableSelector) : $node(tableSelector);
+
+        $tables.each(function(index, table) {
+            var $table = getQuery(table || this);
+            var table = exporter.export($table, i, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
-        }
+            ++i;
+        });
 
         result.tables = tables;
         result.exporter = exporter;
@@ -81,14 +101,20 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
 
 module.exports.export = function (html, tableSelector, selectors, targetSelector, findProcessor) {
 
-    var _$ = ;
+    var _$ = getQuery(html);
 
     if (!tableSelector) {
         if ($('table').length)
             tableSelector = 'table';
+        else {
+            if (_te.in_browser) {
+                _te.alert("No table found.");
+                return;
+            }
+            else
+                throw new Exception("No table selector found, please specify a proper table selector");
+        }
     }
-
-    // findProcessor = findProcessor || linkProcessor;
 
     return exportNode(_$, tableSelector, selectors, targetSelector, findProcessor);
 }
@@ -98,8 +124,6 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
  */
 
 module.exports.exportRows = function (html, selector, findProcessor) {
-
-    // targetSelector = targetSelector || 'a';
 
     findProcessor = findProcessor || linkProcessor;
 
