@@ -223,7 +223,7 @@ function TableExporter ($, inColDelim, inRowDelim)  {
     //------------------------------------------------------------
 
     // Grab and format a row from the table
-    function toColumns(rowIndex, row, tableIndex, cellSelector,targetSelector, selectorProcessor) {
+    function toColumns(rowIndex, row, tableIndex, cellSelector, targetSelector, selectorProcessor) {
 
         var $row = getQuery(row);
         //for some reason $cols = $row.find('td') || $row.find('th') won't work...
@@ -260,9 +260,9 @@ function TableExporter ($, inColDelim, inRowDelim)  {
     // Grab and format a column from the table 
     function toColumn(j, col){
         var $col = getQuery(col),
-            $text = $col.text();
+            $text = $col.text().trim();
 
-        return $text.replace('"', '""'); // escape double quotes
+        return $text; // .replace('"', '""'); // escape double quotes not here, because it is text
 
     }
 
@@ -330,7 +330,7 @@ function TableExporter ($, inColDelim, inRowDelim)  {
             if (findHeaderSelector === 'tr')
                 findHeaderSelector += ':has(' + ('th') + ')'; // 'tr:has(th)'
             else
-                findHeaderSelector = (headerSelector || 'tr');
+                findHeaderSelector = headerSelector; // can't use tr alone as header selector
         }
         else {
             if (null !== headerSelector)
@@ -339,29 +339,25 @@ function TableExporter ($, inColDelim, inRowDelim)  {
                 findHeaderSelector = columnSelector;
         }
         var $headers = null;
-        $headers = $table.find(findHeaderSelector);
+        if (findHeaderSelector) {
+            $headers = $table.find(findHeaderSelector);
+            if ($headers.length) {
+                var headersMap = $headers.map(function(index, header) {
+                    return toColumn(index, header);
+                });
+                var headers = headersMap.get();
+                if (headers.length > 0)
+                    this.table.headers = headers;
+            }
+        }
 
         var findRowsSelector = (rowSelector || 'tr') + ':has(' + (cellSelector || 'td') + ')'; // 'tr:has(td)'
         var $rows = $table.find(findRowsSelector);
 
-        if (!$rows.length)
-            return null;
-
-        var headersMap = $headers.map(function(index, header) {
-            return toColumn(index, header);
-        });
-        var headers = headersMap.get();
-        var rows = this.exportRows($rows, cellSelector, targetSelector, callback);
-        // [];
-        // $rows.each((index, row) => {
-        //     var colArray = toColumns(index, row, tableIndex, selector, callback);
-        //     rows.push(colArray);
-        // });
-
-        if (headers.length > 0)
-            this.table.headers = headers;
-
-        this.table.rows = rows;
+        if ($rows.length) {
+            var rows = this.exportRows($rows, cellSelector, targetSelector, callback);
+            this.table.rows = rows;
+        }
         
         return this.table;
     }
