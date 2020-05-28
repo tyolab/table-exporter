@@ -19,14 +19,18 @@ function getQuery(html) {
             var s = document.getElementsByTagName('script')[0]; 
             s.parentNode.insertBefore(se, s);
         }
+        _te.$ = $;
         return $(html || 'html');
     }
     else {
-        if (typeof html === 'string') {
+        if (Buffer.isBuffer(html)) {
             var cheerio = require('cheerio');
-            return cheerio.load(html);
+            _te.$ = cheerio.load(html);
+            return _te.$;
         }
-        return html;
+        else if (typeof html === 'string')
+            return _te.$(htm);
+        return _te.$(html);
     }
 }
 
