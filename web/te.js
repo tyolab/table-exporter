@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-(function (global){
+(function (Buffer,global){
 /**
  * @file index.js
  */
@@ -21,14 +21,18 @@ function getQuery(html) {
             var s = document.getElementsByTagName('script')[0]; 
             s.parentNode.insertBefore(se, s);
         }
+        _te.$ = $;
         return $(html || 'html');
     }
     else {
-        if (typeof html === 'string') {
+        if (Buffer.isBuffer(html)) {
             var cheerio = require('cheerio');
-            return cheerio.load(html);
+            _te.$ = cheerio.load(html);
+            return _te.$;
         }
-        return html;
+        else if (typeof html === 'string')
+            return _te.$(htm);
+        return _te.$(html);
     }
 }
 
@@ -139,8 +143,8 @@ module.exports.exportRows = function (html, selector, findProcessor) {
     return rows;
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/exporter":2,"cheerio":4}],2:[function(require,module,exports){
+}).call(this,{"isBuffer":require("../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")},typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":73,"./lib/exporter":2,"cheerio":4}],2:[function(require,module,exports){
 (function (process){
     
 /**
@@ -351,7 +355,12 @@ function TableExporter ($, inColDelim, inRowDelim)  {
             }
         }
 
-        var findRowsSelector = (rowSelector || 'tr') + ':has(' + (cellSelector || 'td') + ')'; // 'tr:has(td)'
+        var findRowsSelector = (rowSelector || 'tr');
+        if (cellSelector)
+          findRowsSelector += ':has(' + cellSelector + ')'; 
+        else if (findRowsSelector === 'tr')
+            findRowsSelector += ':has(td)';
+            
         var $rows = $table.find(findRowsSelector);
 
         if ($rows.length) {

@@ -112,7 +112,8 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
             tableSelector = 'table';
         else {
             if (_te.in_browser) {
-                _te.alert("No table found.");
+                if (_te.alert && typeof _te.alert === 'function')
+                    _te.alert("No table found.");
                 return;
             }
             else

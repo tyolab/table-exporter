@@ -1,0 +1,8 @@
+{
+    "headers": ["Sex", "Name", "Age", "Height"],
+    "rows": [
+        ["M", "Shawn", "24", "189cm"],
+        ["F", "Jessica", "36", "160cm"],
+        ["F", "Emma", "8", "130cm"]
+    ]
+}

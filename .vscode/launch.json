@@ -7,6 +7,15 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/test/table.js",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Test with te.html",
             "program": "${workspaceFolder}/bin/export_table.js",
             "args": ["${workspaceFolder}/test/te.html"]
