@@ -23,7 +23,7 @@ function exportFile(html, exportFn, opts) {
             var text;
             
             if (opts["output-type"] !== 'json') 
-                text = result.exporter.generateCSV(table, opts["cell-delim"], opts["row-delim"]);
+                text = result.exporter.generate_csv(table, opts["cell-delim"], opts["row-delim"]);
             else
                 text = JSON.stringify(result.tables);
                 

@@ -41,7 +41,8 @@ _te.environment = _te.environment || (_te.in_browser ? "browser" : "node");
 _te.getQuery = getQuery;
 
 if (_te.in_browser) {
-    _te.alert = _te.alert || alert.bind(window); 
+    // don't declare here, make it flexible
+    // _te.alert = _te.alert || alert.bind(window); 
     window.getQuery = getQuery.bind(window);
     window._te = _te;
 }
@@ -114,7 +115,8 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
             tableSelector = 'table';
         else {
             if (_te.in_browser) {
-                _te.alert("No table found.");
+                if (_te.alert && typeof _te.alert === 'function')
+                    _te.alert("No table found.");
                 return;
             }
             else
@@ -423,7 +425,7 @@ function TableExporter ($, inColDelim, inRowDelim)  {
         return cols;
     }
 
-    this.generateCSV = function (table, cellDelim, rowDelim) {
+    this.generate_csv = function (table, cellDelim, rowDelim) {
 
         // Grab text from table into CSV formatted string
         var csv = '';
@@ -495,7 +497,7 @@ exports.version = require('./package.json').version;
 
 },{"./lib/cheerio":10,"./package.json":14}],5:[function(require,module,exports){
 var $ = require('../static'),
-    utils = require('../utils'),
+    utils = require('../utils/table_util'),
     isTag = utils.isTag,
     domEach = utils.domEach,
     hasOwn = Object.prototype.hasOwnProperty,
@@ -991,7 +993,7 @@ exports.is = function (selector) {
 
 
 },{"../static":12,"../utils":13,"lodash.assignin":52,"lodash.foreach":57,"lodash.some":63}],6:[function(require,module,exports){
-var domEach = require('../utils').domEach,
+var domEach = require('../utils/table_util').domEach,
     _ = {
       pick: require('lodash.pick'),
     };
@@ -1185,7 +1187,7 @@ var parse = require('../parse'),
     $ = require('../static'),
     updateDOM = parse.update,
     evaluate = parse.evaluate,
-    utils = require('../utils'),
+    utils = require('../utils/table_util'),
     domEach = utils.domEach,
     cloneDom = utils.cloneDom,
     isHtml = utils.isHtml,
@@ -1609,7 +1611,7 @@ exports.clone = function() {
 
 },{"../parse":11,"../static":12,"../utils":13,"lodash.bind":53,"lodash.flatten":56,"lodash.foreach":57}],9:[function(require,module,exports){
 var select = require('css-select'),
-    utils = require('../utils'),
+    utils = require('../utils/table_util'),
     domEach = utils.domEach,
     uniqueSort = require('htmlparser2').DomUtils.uniqueSort,
     isTag = utils.isTag,
@@ -24807,7 +24809,7 @@ tyo_data.save = function(result, opts) {
             for (; i < result.tables.length; ++i) {
                 var table = result.tables[i];
             
-                text = result.exporter.generateCSV(table, opts["cell-delim"], opts["row-delim"]);          
+                text = result.exporter.generate_csv(table, opts["cell-delim"], opts["row-delim"]);          
                     
                 if (i === 1) {
                     outname = out_name + '.csv' /* + opts["output-type"] */;

@@ -43,7 +43,7 @@ tyo_data.save = function(result, opts) {
             for (; i < result.tables.length; ++i) {
                 var table = result.tables[i];
             
-                text = result.exporter.generateCSV(table, opts["cell-delim"], opts["row-delim"]);          
+                text = result.exporter.generate_csv(table, opts["cell-delim"], opts["row-delim"]);          
                     
                 if (i === 1) {
                     outname = out_name + '.csv' /* + opts["output-type"] */;

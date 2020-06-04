@@ -39,7 +39,8 @@ _te.environment = _te.environment || (_te.in_browser ? "browser" : "node");
 _te.getQuery = getQuery;
 
 if (_te.in_browser) {
-    _te.alert = _te.alert || alert.bind(window); 
+    // don't declare here, make it flexible
+    // _te.alert = _te.alert || alert.bind(window); 
     window.getQuery = getQuery.bind(window);
     window._te = _te;
 }
