@@ -19,7 +19,12 @@ const table_util = {
 
     to_html_list_table: function(headers, rows) {
         return this.table_html_list.makeHtmlTable(headers, rows);
+    },
+
+    to_csv: function(table, cell_delim, row_delim) {
+        return this.table.generate_csv(table, cell_delim, row_delim);
     }
+
 }
 
 module.exports = table_util;
