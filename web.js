@@ -3,6 +3,20 @@ var tyo_data = require('.');
 
 const table_util = require('./utils/table_util');
 
+function get_table_selector ($temp, level) {
+    var $table;
+
+    if (level > 0 && $temp) {
+        if ($temp && $temp.name && $temp.name === 'table') {
+            $table = $temp;
+        }
+        else {
+            $temp = $table.parent;
+        }
+    }
+    return $table;
+}
+
 tyo_data.export_selected = function() {
     var text = "";
     if (window.getSelection) {
@@ -66,6 +80,7 @@ tyo_data.download = function(text, filename, filetype) {
 }
 
 tyo_data.save_table = function(table, opts) {
+    opts = opts || {};
     var out_type = opts["output-type"] || "json";
     var out_name = opts["output-name"] || "data";
 
