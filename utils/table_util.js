@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   @author Eric Tang (twitter: @_e_tang).
+ */
 const Table = require('../lib/table');
 const TableHtmlTable = require('../lib/table_html_table');
 const TableHtmlList = require('../lib/table_html_list');

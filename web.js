@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 TYONLINE TECHNOLOGY PTY. LTD.
+ *   All rights reserved.
+ */
 var _te = _te || {};
 var tyo_data = require('.');
 
@@ -77,11 +81,12 @@ tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
             // }
         }
 
-        if (!$table) {
+        if (!$table || !$table.length) {
             var $active = $elem;
             var text = tyo_data.get_selected_text();
             if (text.length) {
-                $elem = $('div:contains("' + text + '")');
+                var selector = (selectors["cell-selector"] || 'td') + ':contains("' + text + '")';
+                $elem = $(selector);
                 while (!$($elem).length && text.length > 5) {
                     text = text.substring(5);
                     $elem = $('div:contains("' + text + '")');

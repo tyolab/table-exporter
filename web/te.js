@@ -1,5 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (Buffer,global){
+/*
+ *   Copyright (c) 2020 
+ *   @author Eric Tang (twitter: @_e_tang).
+ */
 /**
  * @file index.js
  */
@@ -148,11 +152,13 @@ module.exports.exportRows = function (html, selector, findProcessor) {
 }).call(this,{"isBuffer":require("../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")},typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":77,"./lib/exporter":2,"cheerio":7}],2:[function(require,module,exports){
 (function (process){
-    
 /**
- * Code from: https://bl.ocks.org/kalebdf/ee7a5e7f44416b2116c0
+ * Copyright (c) 2018-2020 TYONLINE TECHNOLOGY PTY. LTD. (TYO Lab) All rights reserved.
  * 
- * Original Author: Adila Faruk
+ * @author Eric Tang (twitter: @_e_tang)
+ * 
+ * Some code is from: https://bl.ocks.org/kalebdf/ee7a5e7f44416b2116c0
+ * Authored by: Adila Faruk
  */
 
 var defaultRowDelim = '\n';
@@ -409,6 +415,10 @@ function TableExporter ($)  {
 module.exports = TableExporter;
 }).call(this,require('_process'))
 },{"_process":78}],3:[function(require,module,exports){
+/*
+ *   Copyright (c) 2020 TYONLINE TECHNOLOGY PTY. LTD. (TYO Lab) All rights reserved. 
+ *   @author Eric Tang (twitter: @_e_tang).
+ */
 /**
  * @file table.js
  */
@@ -25055,6 +25065,10 @@ function parse(formula){
 }
 
 },{}],70:[function(require,module,exports){
+/*
+ *   Copyright (c) 2020 
+ *   @author Eric Tang (twitter: @_e_tang).
+ */
 const Table = require('../lib/table');
 const TableHtmlTable = require('../lib/table_html_table');
 const TableHtmlList = require('../lib/table_html_list');
@@ -25086,6 +25100,10 @@ const table_util = {
 
 module.exports = table_util;
 },{"../lib/table":3,"../lib/table_html_list":4,"../lib/table_html_table":5}],71:[function(require,module,exports){
+/*
+ *   Copyright (c) 2020 TYONLINE TECHNOLOGY PTY. LTD.
+ *   All rights reserved.
+ */
 var _te = _te || {};
 var tyo_data = require('.');
 
@@ -25165,7 +25183,7 @@ tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
             // }
         }
 
-        if (!$table) {
+        if (!$table || !$table.length) {
             var $active = $elem;
             var text = tyo_data.get_selected_text();
             if (text.length) {

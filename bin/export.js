@@ -1,5 +1,7 @@
 /**
- * @file export.js
+ *   Copyright (c) 2020 
+ *   @author Eric Tang (twitter: @_e_tang).
+ *   @file export.js
  */
 
 var fs = require('fs');

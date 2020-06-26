@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   @author Eric Tang (twitter: @_e_tang).
+ */
 /**
  * @file index.js
  */
@@ -8,7 +12,7 @@ function isBrowser() {
     try {return this===window;}catch(e){ return false;}
 }
 
-function getQuery(html) {
+function getQuery(selector, parent) {
     if (_te.in_browser) {
 
         if (typeof $ === 'undefined') {
@@ -20,17 +24,17 @@ function getQuery(html) {
             s.parentNode.insertBefore(se, s);
         }
         _te.$ = $;
-        return $(html || 'html');
+        return $(selector || 'html', parent);
     }
     else {
-        if (Buffer.isBuffer(html)) {
+        if (Buffer.isBuffer(selector)) {
             var cheerio = require('cheerio');
-            _te.$ = cheerio.load(html);
+            _te.$ = cheerio.load(selector);
             return _te.$;
         }
-        else if (typeof html === 'string')
-            return _te.$(htm);
-        return _te.$(html);
+        else if (typeof selector === 'string')
+            return _te.$(selector, parent);
+        return _te.$(selector, parent);
     }
 }
 
@@ -83,7 +87,11 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
         var exporter = new TableExporter($node);
         var i = 0;
 
-        var $tables = _te.in_browser ? getQuery(tableSelector) : $node(tableSelector);
+        var $tables;
+        if (typeof node === 'object' && node.length)
+          $tables = node;
+        else
+          $tables = _te.in_browser ? getQuery(tableSelector, $node) : $node(tableSelector);
 
         $tables.each(function(index, table) {
             var $table = getQuery(table || this);
