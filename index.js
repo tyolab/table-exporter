@@ -87,7 +87,7 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
 
         $tables.each(function(index, table) {
             var $table = getQuery(table || this);
-            var table = exporter.export($table, i, selectors, findProcessor);
+            var table = exporter.export($table, i, tableSelector, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
             ++i;
@@ -104,12 +104,12 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
  * Export the html page
  */
 
-module.exports.export = function (html, tableSelector, selectors, targetSelector, findProcessor) {
+module.exports.export = function (html, tableSelector, selectors, findProcessor) {
 
     var _$ = getQuery(html);
 
     if (!tableSelector) {
-        if ($('table').length)
+        if (_$('table').length)
             tableSelector = 'table';
         else {
             if (_te.in_browser) {
@@ -118,11 +118,11 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
                 return;
             }
             else
-                throw new Exception("No table selector found, please specify a proper table selector");
+                throw ("No table selector found, please specify a proper table selector");
         }
     }
 
-    return exportNode(_$, tableSelector, selectors, targetSelector, findProcessor);
+    return exportNode(_$, tableSelector, selectors, findProcessor);
 }
 
 /**

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "export": "./bin/export_table.js"
+    "export": "./bin/export_table.js",
+    "browserify": "browserify web.js -o web/te.js"
   },
   "bin": {
     "export-table": "./bin/export_table.js",

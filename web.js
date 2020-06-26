@@ -17,47 +17,88 @@ function get_table_selector ($temp, level) {
     return $table;
 }
 
-tyo_data.export_selected = function() {
-    var text = "";
-    if (window.getSelection) {
-        text = window.getSelection().toString();
-    } else if (document.selection && document.selection.type != "Control") {
-        text = document.selection.createRange().text;
+tyo_data.get_selected_text = function() {
+    var text;
+    var focused = document.activeElement;
+    if (focused) {
+        try {
+        text = focused.value.substring(
+            focused.selectionStart, focused.selectionEnd);
+        } catch (err) {
+        }
     }
-    else if (_te.selected_text)
-        text = _te.selected_text;
+    if (text == undefined) {
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type != "Control") {
+            text = document.selection.createRange().text;
+        }
+    }
+    return text;
+}
 
-    if (text.length) {
-        var $elem = $('div:contains("' + text + '")');
+tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
+    if (!document.activeElement)
+        return;
+    // var text = tyo_data.get_selected_text();
+
+    // if (!text && _te.selected_text)
+    //     text = _te.selected_text;
+
+    // if (text.length) {
+        // var $elem = $('div:contains("' + text + '")');
+        var $elem = $(document.activeElement);
         var $table;
-        var $temp;
+        // var $temp;
         // go up to three levels, if can't not find <table>, we will just use $elem.parent as table selector
-        if ($table.parent && $table.parent.name && $table.parent.name === 'table') {
-            $table = $table.parent;
-        }
+        if (tableSelector)
+            $table = $($elem).closest(tableSelector);
         else {
-            $temp = $table.parent;
+            $table = $($elem).closest('table');
+            // if ($table.parent && $table.parent.name && $table.parent.name === 'table') {
+            //     $table = $table.parent;
+            // }
+            // else {
+            //     $temp = $table.parent;
 
-            if ($temp && $temp.name && $temp.name === 'table') {
-                $table = $temp;
-            }
-            else {
-                $temp = $table.parent;
-    
-                if ($temp && $temp.name && $temp.name === 'table') {
-                    $table = $temp;
-                }
-                else {
-                    //
-                }
-            }
+            //     if ($temp && $temp.name && $temp.name === 'table') {
+            //         $table = $temp;
+            //     }
+            //     else {
+            //         $temp = $table.parent;
+        
+            //         if ($temp && $temp.name && $temp.name === 'table') {
+            //             $table = $temp;
+            //         }
+            //         else {
+            //             //
+            //         }
+            //     }
+            // }
         }
 
-        if (!$table)
-            $table = $elem.parent;
+        if (!$table) {
+            var $active = $elem;
+            var text = tyo_data.get_selected_text();
+            if (text.length) {
+                $elem = $('div:contains("' + text + '")');
+                while (!$($elem).length && text.length > 5) {
+                    text = text.substring(5);
+                    $elem = $('div:contains("' + text + '")');
+                }
 
-        tyo_data.export($table);
-    }
+                if (tableSelector)
+                    $table = $($elem).closest(tableSelector);
+                else 
+                    $table = $($elem).closest('table');
+            }
+            
+            if (!$table)
+                $table = $active.parent;
+        }
+
+    return $table ? tyo_data.export($table, tableSelector, selectors, findProcessor) : null;
+    // }
 }
 
 tyo_data.download = function(text, filename, filetype) {
@@ -143,7 +184,7 @@ tyo_data.save = function(result, opts) {
     }
 }
 
-tyo_data.helpers = table_util.to_html_table;
+tyo_data.helpers = table_util;
 
 window._te = _te;
 window.tyo_data = tyo_data;

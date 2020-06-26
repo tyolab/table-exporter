@@ -89,7 +89,7 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
 
         $tables.each(function(index, table) {
             var $table = getQuery(table || this);
-            var table = exporter.export($table, i, selectors, findProcessor);
+            var table = exporter.export($table, i, tableSelector, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
             ++i;
@@ -106,12 +106,12 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
  * Export the html page
  */
 
-module.exports.export = function (html, tableSelector, selectors, targetSelector, findProcessor) {
+module.exports.export = function (html, tableSelector, selectors, findProcessor) {
 
     var _$ = getQuery(html);
 
     if (!tableSelector) {
-        if ($('table').length)
+        if (_$('table').length)
             tableSelector = 'table';
         else {
             if (_te.in_browser) {
@@ -120,11 +120,11 @@ module.exports.export = function (html, tableSelector, selectors, targetSelector
                 return;
             }
             else
-                throw new Exception("No table selector found, please specify a proper table selector");
+                throw ("No table selector found, please specify a proper table selector");
         }
     }
 
-    return exportNode(_$, tableSelector, selectors, targetSelector, findProcessor);
+    return exportNode(_$, tableSelector, selectors, findProcessor);
 }
 
 /**
@@ -248,6 +248,7 @@ function TableExporter ($)  {
      * Table to JSON
      * 
      * 
+     * 
      * [
      * {
      * "headers":['', '', ...],
@@ -265,54 +266,68 @@ function TableExporter ($)  {
      * 
      */
 
-    this.export = function ($table, tableIndex, selector, callback) {
+    this.export = function ($table, tableIndex, tableSelector, selector, callback) {
         this.table = {};
 
+        var targetSelector = null, rowSelector = null, headerSelector = null, headerRowSelector = null, cellSelector = null;
         var selectors;
-        if (null != selector) {
-            if (Array.isArray(selector))
-                selectors = selector;
-            else
-                selectors = [selector];
+
+        if (typeof selector === "function") {
+            callback = selector;
+            selector = null;
         }
-        else
-            selectors = []
 
-        var targetSelector = null, rowSelector = null, headerSelector = null, columnSelector = null, cellSelector = null;
+        if (null != selector) {
+            if (typeof selector === 'object' && !Array.isArray(selector)) {
+                targetSelector = selector["target-selector"] || null;
+                cellSelector = selector["cell-selector"] || null;
+                headerSelector = selector["header-selector"] || null;
+                rowSelector = selector["row-selector"] || null;
+                headerRowSelector = selector["header-row-selector"] || null;
+            }
+            else {
+                if (Array.isArray(selector))
+                    selectors = selector;
+                else
+                    selectors = [selector];
 
-        switch (selectors.length) {
-            case 5:
-                targetSelector = selectors[4];
-            case 4:
-                cellSelector = selectors[3];
-            case 3:
-                rowSelector = selectors[2];
-            case 2:
-                columnSelector = selectors[1];
-            case 2:
-                headerSelector = selectors[0];
-            case 0:
-                break;
+                switch (selectors.length) {
+                    case 5:
+                        targetSelector = selectors[4];
+                    case 4:
+                        cellSelector = selectors[3];
+                    case 3:
+                        rowSelector = selectors[2];
+                    case 2:
+                        headerRowSelector = selectors[1];
+                    case 2:
+                        headerSelector = selectors[0];
+                    case 0:
+                        break;
+                }
+            }
         }
 
         var findHeaderSelector = null;
 
-        if (columnSelector === null) {
-            if (findHeaderSelector === 'tr')
-                findHeaderSelector += ':has(' + ('th') + ')'; // 'tr:has(th)'
-            else
-                findHeaderSelector = headerSelector; // can't use tr alone as header selector
+        if (headerRowSelector === null) {
+            if (headerSelector === 'th')
+                findHeaderSelector = (rowSelector || 'tr') + ':has(th)'; // 'tr:has(th)'
+            else {
+                headerSelector = headerSelector || 'th';
+                findHeaderSelector = (rowSelector || 'tr') + ':has(' + headerSelector + ')'; // can't use tr alone as header selector
+            }
         }
         else {
-            if (null !== headerSelector)
-                findHeaderSelector += ':has(' + columnSelector + ')';
-            else
-                findHeaderSelector = columnSelector;
+            headerSelector = headerSelector || 'th';
+            findHeaderSelector = headerRowSelector + ':has(' + headerSelector + ')';
         }
-        var $headers = null;
+        var $headerRow = null;
         if (findHeaderSelector) {
-            $headers = $table.find(findHeaderSelector);
-            if ($headers.length) {
+            $headerRow = $table.find(findHeaderSelector);
+            if ($headerRow.length) {
+                var $headers = $headerRow.find(headerSelector);
+                
                 var headersMap = $headers.map(function(index, header) {
                     return toColumn(index, header);
                 });
@@ -513,52 +528,55 @@ Table.prototype.makeTableDiv = function(rows, joined_by) {
  * you need to pass on (headers, []) // 
  */
 Table.prototype.makeHtmlTable = function(headers, rows, joined_by) {
-    if (!rows && headers && Array.isArray(headers)) {
+    if (!rows && headers && headers.length) {
         rows = headers;
         headers = null;
     }
 
     var table_array = [];
-    var rowsSize = rows.length;
-    var groupsSize = 1;
-    if (this.splitToColumnGroupSize > 0 && rowsSize > this.splitToColumnGroupSize)
-        groupsSize = Math.ceil(rowsSize / this.splitToColumnGroupSize);
 
-    // Header
-    if (headers) {
-        var header = this.createTableHeader(headers, groupsSize);
-        table_array.push(header);
-    }
+    if (rows && rows.length) {
+        var rowsSize = rows.length;
+        var groupsSize = 1;
+        if (this.splitToColumnGroupSize > 0 && rowsSize > this.splitToColumnGroupSize)
+            groupsSize = Math.ceil(rowsSize / this.splitToColumnGroupSize);
 
-    // Rows
-    for (var x = this.data_index; x < rowsSize;) {
-        var cols = [];
-        
-        // can't remember the purpose of this style
-        // const styleStr = this.classCell + ((x > 1 && (x % 2) === 0) ? '2' : '');
-
-        for (var g = 0; g < groupsSize; g++) {
-            if (g > 0)
-                cols.push(this.makeCellDividerDiv());  
-
-            var dataRow = rows[x];
-
-            var colsCount = (dataRow.length && dataRow.length > 0) ? dataRow.length : 0;
-
-            for (var i = 0; i < colsCount; i++) {
-                cols.push(
-                        this.makeCellDiv(i, dataRow[i])
-                    );     
-            }
-
-            ++x;
-            if (x >= rowsSize)
-                break;
+        // Header
+        if (headers) {
+            var header = this.createTableHeader(headers, groupsSize);
+            table_array.push(header);
         }
 
-        if (cols.length > 0)
-            table_array.push(this.makeRowDiv(cols));
-        cols = [];
+        // Rows
+        for (var x = this.data_index; x < rowsSize;) {
+            var cols = [];
+            
+            // can't remember the purpose of this style
+            // const styleStr = this.classCell + ((x > 1 && (x % 2) === 0) ? '2' : '');
+
+            for (var g = 0; g < groupsSize; g++) {
+                if (g > 0)
+                    cols.push(this.makeCellDividerDiv());  
+
+                var dataRow = rows[x];
+
+                var colsCount = (dataRow.length && dataRow.length > 0) ? dataRow.length : 0;
+
+                for (var i = 0; i < colsCount; i++) {
+                    cols.push(
+                            this.makeCellDiv(i, dataRow[i])
+                        );     
+                }
+
+                ++x;
+                if (x >= rowsSize)
+                    break;
+            }
+
+            if (cols.length > 0)
+                table_array.push(this.makeRowDiv(cols));
+            cols = [];
+        }
     }
 
     return this.makeTableDiv(table_array);
@@ -25087,47 +25105,88 @@ function get_table_selector ($temp, level) {
     return $table;
 }
 
-tyo_data.export_selected = function() {
-    var text = "";
-    if (window.getSelection) {
-        text = window.getSelection().toString();
-    } else if (document.selection && document.selection.type != "Control") {
-        text = document.selection.createRange().text;
+tyo_data.get_selected_text = function() {
+    var text;
+    var focused = document.activeElement;
+    if (focused) {
+        try {
+        text = focused.value.substring(
+            focused.selectionStart, focused.selectionEnd);
+        } catch (err) {
+        }
     }
-    else if (_te.selected_text)
-        text = _te.selected_text;
+    if (text == undefined) {
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type != "Control") {
+            text = document.selection.createRange().text;
+        }
+    }
+    return text;
+}
 
-    if (text.length) {
-        var $elem = $('div:contains("' + text + '")');
+tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
+    if (!document.activeElement)
+        return;
+    // var text = tyo_data.get_selected_text();
+
+    // if (!text && _te.selected_text)
+    //     text = _te.selected_text;
+
+    // if (text.length) {
+        // var $elem = $('div:contains("' + text + '")');
+        var $elem = $(document.activeElement);
         var $table;
-        var $temp;
+        // var $temp;
         // go up to three levels, if can't not find <table>, we will just use $elem.parent as table selector
-        if ($table.parent && $table.parent.name && $table.parent.name === 'table') {
-            $table = $table.parent;
-        }
+        if (tableSelector)
+            $table = $($elem).closest(tableSelector);
         else {
-            $temp = $table.parent;
+            $table = $($elem).closest('table');
+            // if ($table.parent && $table.parent.name && $table.parent.name === 'table') {
+            //     $table = $table.parent;
+            // }
+            // else {
+            //     $temp = $table.parent;
 
-            if ($temp && $temp.name && $temp.name === 'table') {
-                $table = $temp;
-            }
-            else {
-                $temp = $table.parent;
-    
-                if ($temp && $temp.name && $temp.name === 'table') {
-                    $table = $temp;
-                }
-                else {
-                    //
-                }
-            }
+            //     if ($temp && $temp.name && $temp.name === 'table') {
+            //         $table = $temp;
+            //     }
+            //     else {
+            //         $temp = $table.parent;
+        
+            //         if ($temp && $temp.name && $temp.name === 'table') {
+            //             $table = $temp;
+            //         }
+            //         else {
+            //             //
+            //         }
+            //     }
+            // }
         }
 
-        if (!$table)
-            $table = $elem.parent;
+        if (!$table) {
+            var $active = $elem;
+            var text = tyo_data.get_selected_text();
+            if (text.length) {
+                $elem = $('div:contains("' + text + '")');
+                while (!$($elem).length && text.length > 5) {
+                    text = text.substring(5);
+                    $elem = $('div:contains("' + text + '")');
+                }
 
-        tyo_data.export($table);
-    }
+                if (tableSelector)
+                    $table = $($elem).closest(tableSelector);
+                else 
+                    $table = $($elem).closest('table');
+            }
+            
+            if (!$table)
+                $table = $active.parent;
+        }
+
+    return $table ? tyo_data.export($table, tableSelector, selectors, findProcessor) : null;
+    // }
 }
 
 tyo_data.download = function(text, filename, filetype) {
@@ -25213,7 +25272,7 @@ tyo_data.save = function(result, opts) {
     }
 }
 
-tyo_data.helpers = table_util.to_html_table;
+tyo_data.helpers = table_util;
 
 window._te = _te;
 window.tyo_data = tyo_data;

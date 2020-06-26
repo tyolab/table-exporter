@@ -42,7 +42,7 @@
                 //"--output-name", "table",
                 "--table-selector", ".spread-table",
                 //"--header-selector", ".column-header",
-                "--column-selector", ".column-name",
+                "--header-row-selector", ".column-name",
                 "--row-selector", ".table-row",
                 "--cell-selector", ".table-cell"
             ]
