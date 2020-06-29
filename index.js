@@ -14,7 +14,6 @@ function isBrowser() {
 
 function getQuery(selector, parent) {
     if (_te.in_browser) {
-
         if (typeof $ === 'undefined') {
             var se = document.createElement('script'); 
             se.type = 'text/javascript'; 
@@ -80,22 +79,23 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
     var result = {};
     var tables = [];
 
-    // if table selector is not set, we would just table
-    tableSelector = tableSelector || "table";
-
     function processNode($node) {
         var exporter = new TableExporter($node);
         var i = 0;
 
         var $tables;
-        if (typeof node === 'object' && node.length)
-          $tables = node;
-        else
-          $tables = _te.in_browser ? getQuery(tableSelector, $node) : $node(tableSelector);
+        if (typeof node === 'object' && !tableSelector)
+            // tableSelector should be set before calling this method
+            $tables = node;
+        else {
+                // if table selector is not set, we would just table
+            tableSelector = tableSelector || "table";
+            $tables = _te.in_browser ? getQuery(tableSelector, $node) : $node(tableSelector);
+        }
 
         $tables.each(function(index, table) {
             var $table = getQuery(table || this);
-            var table = exporter.export($table, i, tableSelector, selectors, findProcessor);
+            var table = exporter.export($table, i, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
             ++i;
@@ -116,19 +116,19 @@ module.exports.export = function (html, tableSelector, selectors, findProcessor)
 
     var _$ = getQuery(html);
 
-    if (!tableSelector) {
-        if (_$('table').length)
-            tableSelector = 'table';
-        else {
-            if (_te.in_browser) {
-                if (_te.alert && typeof _te.alert === 'function')
-                    _te.alert("No table found.");
-                return;
-            }
-            else
-                throw ("No table selector found, please specify a proper table selector");
-        }
-    }
+    // if (!tableSelector) {
+    //     if (_$('table').length)
+    //         tableSelector = 'table';
+    //     else {
+    //         if (_te.in_browser) {
+    //             if (_te.alert && typeof _te.alert === 'function')
+    //                 _te.alert("No table found.");
+    //             return;
+    //         }
+    //         else
+    //             throw ("No table selector found, please specify a proper table selector");
+    //     }
+    // }
 
     return exportNode(_$, tableSelector, selectors, findProcessor);
 }

@@ -14,9 +14,8 @@ function isBrowser() {
     try {return this===window;}catch(e){ return false;}
 }
 
-function getQuery(html) {
+function getQuery(selector, parent) {
     if (_te.in_browser) {
-
         if (typeof $ === 'undefined') {
             var se = document.createElement('script'); 
             se.type = 'text/javascript'; 
@@ -26,17 +25,17 @@ function getQuery(html) {
             s.parentNode.insertBefore(se, s);
         }
         _te.$ = $;
-        return $(html || 'html');
+        return $(selector || 'html', parent);
     }
     else {
-        if (Buffer.isBuffer(html)) {
+        if (Buffer.isBuffer(selector)) {
             var cheerio = require('cheerio');
-            _te.$ = cheerio.load(html);
+            _te.$ = cheerio.load(selector);
             return _te.$;
         }
-        else if (typeof html === 'string')
-            return _te.$(htm);
-        return _te.$(html);
+        else if (typeof selector === 'string')
+            return _te.$(selector, parent);
+        return _te.$(selector, parent);
     }
 }
 
@@ -82,18 +81,23 @@ function exportNode (node, tableSelector, selectors, findProcessor) {
     var result = {};
     var tables = [];
 
-    // if table selector is not set, we would just table
-    tableSelector = tableSelector || "table";
-
     function processNode($node) {
         var exporter = new TableExporter($node);
         var i = 0;
 
-        var $tables = _te.in_browser ? getQuery(tableSelector) : $node(tableSelector);
+        var $tables;
+        if (typeof node === 'object' && !tableSelector)
+            // tableSelector should be set before calling this method
+            $tables = node;
+        else {
+                // if table selector is not set, we would just table
+            tableSelector = tableSelector || "table";
+            $tables = _te.in_browser ? getQuery(tableSelector, $node) : $node(tableSelector);
+        }
 
         $tables.each(function(index, table) {
             var $table = getQuery(table || this);
-            var table = exporter.export($table, i, tableSelector, selectors, findProcessor);
+            var table = exporter.export($table, i, selectors, findProcessor);
             if (null != table)
                 tables.push(table);
             ++i;
@@ -114,19 +118,19 @@ module.exports.export = function (html, tableSelector, selectors, findProcessor)
 
     var _$ = getQuery(html);
 
-    if (!tableSelector) {
-        if (_$('table').length)
-            tableSelector = 'table';
-        else {
-            if (_te.in_browser) {
-                if (_te.alert && typeof _te.alert === 'function')
-                    _te.alert("No table found.");
-                return;
-            }
-            else
-                throw ("No table selector found, please specify a proper table selector");
-        }
-    }
+    // if (!tableSelector) {
+    //     if (_$('table').length)
+    //         tableSelector = 'table';
+    //     else {
+    //         if (_te.in_browser) {
+    //             if (_te.alert && typeof _te.alert === 'function')
+    //                 _te.alert("No table found.");
+    //             return;
+    //         }
+    //         else
+    //             throw ("No table selector found, please specify a proper table selector");
+    //     }
+    // }
 
     return exportNode(_$, tableSelector, selectors, findProcessor);
 }
@@ -272,7 +276,7 @@ function TableExporter ($)  {
      * 
      */
 
-    this.export = function ($table, tableIndex, tableSelector, selector, callback) {
+    this.export = function ($table, tableIndex, selector, callback) {
         this.table = {};
 
         var targetSelector = null, rowSelector = null, headerSelector = null, headerRowSelector = null, cellSelector = null;
@@ -25187,7 +25191,8 @@ tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
             var $active = $elem;
             var text = tyo_data.get_selected_text();
             if (text.length) {
-                $elem = $('div:contains("' + text + '")');
+                var selector = (selectors["cell-selector"] || 'td') + ':contains("' + text + '")';
+                $elem = $(selector);
                 while (!$($elem).length && text.length > 5) {
                     text = text.substring(5);
                     $elem = $('div:contains("' + text + '")');
