@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 TYONLINE TECHNOLOGY PTY. LTD.
+ *   All rights reserved.
+ */
 var ExportJob = require('./export');
 var Params = require('node-programmer/params');
 

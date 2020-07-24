@@ -80,29 +80,43 @@ tyo_data.export_selected = function(tableSelector, selectors, findProcessor) {
             //     }
             // }
         }
-
+        // The second Insurance
         if (!$table || !$table.length) {
             var $active = $elem;
             var text = tyo_data.get_selected_text();
             if (text.length) {
                 var selector = (selectors["cell-selector"] || 'td') + ':contains("' + text + '")';
                 $elem = $(selector);
-                while (!$($elem).length && text.length > 5) {
-                    text = text.substring(5);
-                    $elem = $('div:contains("' + text + '")');
-                }
 
-                if (tableSelector)
-                    $table = $($elem).closest(tableSelector);
-                else 
-                    $table = $($elem).closest('table');
+                if ($elem) {
+                    while (!$($elem).length && text.length > 5) {
+                        text = text.substring(5);
+                        $elem = $('div:contains("' + text + '")');
+                    }
+
+                    if (tableSelector)
+                        $table = $($elem).closest(tableSelector);
+                    else 
+                        $table = $($elem).closest('table');
+
+                    if (!$table) {
+                        // "tr" element if the table selector is table
+                        $table = $elem.parent;
+
+                        // need to go up to another level
+                        // "table" element if the table selector is table
+                        if ($table && $table.parent)
+                            $table = $table.parent;
+                    }
+                }                 
             }
             
             if (!$table)
                 $table = $active.parent;
         }
 
-    return $table ? tyo_data.export($table, tableSelector, selectors, findProcessor) : null;
+    // we don't pass on the table selector anymore, as we search up rows and headers from "this" node
+    return $table ? tyo_data.export($table, null, selectors, findProcessor) : null;
     // }
 }
 
