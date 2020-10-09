@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2020 
+ *   Copyright (c) 2020 TYO Lab
  *   @author Eric Tang (twitter: @_e_tang).
  *   @file export.js
  */
@@ -52,7 +52,7 @@ function exportFile(html, exportFn, opts) {
 }
 
 function ExportJob (fileOrUrl, exportFn) {
-    exportFn = exportFn || exporter.export;
+    exportFn = exportFn || exporter.export.bind(exporter);
 
     this.process = function (opts) {
         try {

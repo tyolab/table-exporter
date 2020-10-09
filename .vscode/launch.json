@@ -27,6 +27,7 @@
             "program": "${workspaceFolder}/bin/export_table.js",
             "args": [
                 "${workspaceFolder}/test/div_table.html",
+                "--table-selector", ".rTable",
                 "--row-selector", ".rTableRow",
                 "--cell-selector", ".rTableCell"
             ]

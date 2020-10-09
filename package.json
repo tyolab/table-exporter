@@ -34,7 +34,7 @@
   "homepage": "https://github.com/tyolab/table-exporter#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
-    "node-programmer": "0.0.5",
+    "node-programmer": "^0.0.19",
     "request": "^2.74.0"
   },
   "files": [
@@ -43,7 +43,7 @@
     "README.md",
     "index.js",
     "examples/",
-    "bin",
+    "bin/",
     "web/te.js",
     "utils/",
     "web.js",
