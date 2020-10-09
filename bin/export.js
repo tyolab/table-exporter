@@ -9,7 +9,14 @@ var exporter = require('../index');
 var request = require('request');
 
 function exportFile(html, exportFn, opts) {
-    var result = exportFn(html, opts["table-selector"], [opts["header-selector"], opts["header-row-selector"], opts["row-selector"], opts["cell-selector"], opts["target-selector"]]);
+    var result = exportFn(html, opts['table-selector'], opts 
+        /**for debug */
+        // ,
+        // function (tableIndex, row, col, $node, cols) {
+        //     if (tableIndex == 2)
+        //         console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
+        // }
+    );
 
     if (result.tables && result.tables.length && result.tables.length > 0) {
         var writeFile = false;

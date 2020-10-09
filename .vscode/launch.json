@@ -16,9 +16,9 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Test with te.html",
+            "name": "Test with table html",
             "program": "${workspaceFolder}/bin/export_table.js",
-            "args": ["${workspaceFolder}/test/te.html"]
+            "args": ["${workspaceFolder}/test/Charts.html"]
         },
         {
             "type": "node",
