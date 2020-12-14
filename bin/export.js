@@ -11,11 +11,11 @@ var request = require('request');
 function exportFile(html, exportFn, opts) {
     var result = exportFn(html, opts['table-selector'], opts 
         /**for debug */
-        // ,
-        // function (tableIndex, row, col, $node, cols) {
-        //     if (tableIndex == 2)
-        //         console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
-        // }
+        ,
+        function (tableIndex, row, col, $node, cols) {
+            if (tableIndex == 1)
+                console.debug('processing table:' + tableIndex + ', row: ' + row + ', col: ' + col);
+        }
     );
 
     if (result.tables && result.tables.length && result.tables.length > 0) {

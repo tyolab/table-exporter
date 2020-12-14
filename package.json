@@ -1,6 +1,6 @@
 {
   "name": "table-exporter",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "transformation"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/tyolab/table-exporter/issues"
   },
@@ -37,6 +37,18 @@
     "node-programmer": "^0.0.19",
     "request": "^2.74.0"
   },
+  "devDependencies": {
+      "@types/chai": "^4.1.4",
+      "@types/mocha": "^5.2.5",
+      "@types/mock-require": "^2.0.0",
+      "@types/node": "8.0.28",
+      "mocha": "^5.2.0",
+      "mock-require": "^3.0.2",
+      "nyc": "^13.0.1",
+      "ts-node": "3.3.0",
+      "typedoc": "^0.19.2",
+      "typescript": "2.5.2"
+  },  
   "files": [
     "LICENSE",
     "lib/",

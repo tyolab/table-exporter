@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Please use https://github.com/tyolab/table-exporter-ts
+
 # table-exporter
 
 Export HTML Table (Table Tag, Table CSS) to a file (JSON, CSV, etc.)
@@ -80,8 +84,7 @@ browserify web.js -o web/te.js
 ```
 
 ## Chrome Extension
-
-
+Please go the chrome folder, and manually install the extension
 ## Maintainer
 
 [Eric Tang](https://twitter.com/_e_tang) @ [TYO Lab](http://tyo.com.au)
