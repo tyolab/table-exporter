@@ -42,7 +42,7 @@
       "@types/mocha": "^5.2.5",
       "@types/mock-require": "^2.0.0",
       "@types/node": "8.0.28",
-      "mocha": "^5.2.0",
+      "mocha": "^10.2.0",
       "mock-require": "^3.0.2",
       "nyc": "^13.0.1",
       "ts-node": "3.3.0",
